@@ -47,7 +47,7 @@ RUN python -m pip install --no-cache-dir -r requirements.txt \
       protobuf \
       sentencepiece \
       soundfile \
-      transformers
+      "transformers[timm]==4.56.2"
 
 WORKDIR /opt/ComfyUI/custom_nodes
 RUN git clone --depth=1 https://github.com/Comfy-Org/ComfyUI-Manager.git ComfyUI-Manager \
@@ -64,7 +64,8 @@ WORKDIR /opt/ComfyUI
 RUN set -eux; \
     for req in custom_nodes/*/requirements.txt; do \
       if [ -f "$req" ]; then python -m pip install --no-cache-dir -r "$req"; fi; \
-    done
+    done; \
+    python -m pip install --no-cache-dir --upgrade "transformers[timm]==4.56.2"
 
 ARG INSTALL_SAGEATTENTION=false
 RUN if [ "${INSTALL_SAGEATTENTION}" = "true" ]; then \
