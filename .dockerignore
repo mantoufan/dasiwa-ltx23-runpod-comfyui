@@ -1,0 +1,10 @@
+.git
+__pycache__
+*.pyc
+*.part
+*.aria2
+output
+input
+models
+venv
+.venv
