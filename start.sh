@@ -4,7 +4,7 @@ set -Eeuo pipefail
 : "${COMFYUI_DIR:=/workspace/ComfyUI}"
 : "${COMFYUI_HOST:=0.0.0.0}"
 : "${COMFYUI_PORT:=8188}"
-: "${CLI_ARGS:=--listen ${COMFYUI_HOST} --port ${COMFYUI_PORT} --preview-method auto}"
+: "${CLI_ARGS:=--listen ${COMFYUI_HOST} --port ${COMFYUI_PORT} --preview-method auto --enable-cors-header}"
 : "${DOWNLOAD_MODELS:=true}"
 
 if [ -x /start.sh ]; then
