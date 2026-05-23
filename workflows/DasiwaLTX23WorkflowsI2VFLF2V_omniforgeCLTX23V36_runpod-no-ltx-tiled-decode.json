@@ -5166,7 +5166,7 @@
               "ver": "1.2.6"
             },
             "widgets_values": [
-              true
+              false
             ]
           },
           {
@@ -9045,7 +9045,7 @@
             ],
             "flags": {},
             "order": 64,
-            "mode": 0,
+            "mode": 4,
             "inputs": [
               {
                 "localized_name": "model",
@@ -9090,7 +9090,7 @@
               "collapsed": false
             },
             "order": 66,
-            "mode": 0,
+            "mode": 4,
             "inputs": [
               {
                 "localized_name": "model",
@@ -9434,7 +9434,7 @@
               "gemma-3-12b-it-heretic-v2_fp8_e4m3fn.safetensors",
               "ltx-2.3_text_projection_bf16.safetensors",
               "ltxv",
-              "default"
+              "cpu"
             ],
             "color": "#223",
             "bgcolor": "#335"
@@ -9594,7 +9594,7 @@
               "Node name for S&R": "DaSiWa_NodeStatusSwitch"
             },
             "widgets_values": [
-              true,
+              false,
               "true → active",
               "bypass"
             ]

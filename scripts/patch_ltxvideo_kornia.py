@@ -9,8 +9,10 @@ def main() -> None:
         return
 
     text = path.read_text(encoding="utf-8")
-    if "from kornia.core import pad" in text:
+    if "from torch.nn.functional import pad" in text:
         return
+
+    text = text.replace("from kornia.core import pad\n", "")
 
     pattern = r"from kornia\.geometry\.transform\.pyramid import \((.*?)\)"
     match = re.search(pattern, text, flags=re.DOTALL)
@@ -23,7 +25,7 @@ def main() -> None:
         if item.strip() and item.strip() != "pad"
     ]
     replacement = (
-        "from kornia.core import pad\n"
+        "from torch.nn.functional import pad\n"
         "from kornia.geometry.transform.pyramid import (\n    "
         + ",\n    ".join(items)
         + ",\n)"

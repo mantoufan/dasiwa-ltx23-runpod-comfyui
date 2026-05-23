@@ -29,25 +29,25 @@ grawthings-beep/dasiwa-ltx23-runpod-comfyui
 Recommended container image:
 
 ```text
-ghcr.io/grawthings-beep/dasiwa-ltx23-runpod-comfyui:0.1.5
+ghcr.io/grawthings-beep/dasiwa-ltx23-runpod-comfyui:0.1.6
 ```
 
 ```bash
-docker build --platform linux/amd64 -t ghcr.io/grawthings-beep/dasiwa-ltx23-runpod-comfyui:0.1.5 .
-docker push ghcr.io/grawthings-beep/dasiwa-ltx23-runpod-comfyui:0.1.5
+docker build --platform linux/amd64 -t ghcr.io/grawthings-beep/dasiwa-ltx23-runpod-comfyui:0.1.6 .
+docker push ghcr.io/grawthings-beep/dasiwa-ltx23-runpod-comfyui:0.1.6
 ```
 
 Optional SageAttention build:
 
 ```bash
-docker build --platform linux/amd64 --build-arg INSTALL_SAGEATTENTION=true -t ghcr.io/grawthings-beep/dasiwa-ltx23-runpod-comfyui:0.1.5-sage .
+docker build --platform linux/amd64 --build-arg INSTALL_SAGEATTENTION=true -t ghcr.io/grawthings-beep/dasiwa-ltx23-runpod-comfyui:0.1.6-sage .
 ```
 
 ## RunPod template settings
 
 Use `runpod-template.json` as the API payload or fill the RunPod UI with these values:
 
-- Container image: `ghcr.io/grawthings-beep/dasiwa-ltx23-runpod-comfyui:0.1.5`
+- Container image: `ghcr.io/grawthings-beep/dasiwa-ltx23-runpod-comfyui:0.1.6`
 - Container disk: `80 GB`
 - Volume disk: `160 GB`
 - Volume mount path: `/workspace`
@@ -82,7 +82,7 @@ The downloader appends the token at runtime and masks it in logs.
 
 - `DasiwaLTX23WorkflowsI2VFLF2V_omniforgeCLTX23V36.json`: original file copied from Downloads.
 - `DasiwaLTX23WorkflowsI2VFLF2V_omniforgeCLTX23V36_runpod-default.json`: same workflow, but main UNet changed to the default public LTX 2.3 FP8 transformer file.
-- `DasiwaLTX23WorkflowsI2VFLF2V_omniforgeCLTX23V36_runpod-no-ltx-tiled-decode.json`: recommended RunPod workflow. It removes the old optional `LTXVSpatioTemporalTiledVAEDecode` branch that current ComfyUI-LTXVideo builds no longer expose.
+- `DasiwaLTX23WorkflowsI2VFLF2V_omniforgeCLTX23V36_runpod-no-ltx-tiled-decode.json`: recommended RunPod workflow. It removes the old optional `LTXVSpatioTemporalTiledVAEDecode` branch that current ComfyUI-LTXVideo builds no longer expose. It also disables optional SageAttention, disables fp16 accumulation for Torch 2.4, and loads the Gemma text encoder on CPU by default for 24 GB GPUs.
 
 On Pod start, both files are copied to:
 

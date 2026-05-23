@@ -8,6 +8,10 @@ SRC = WORKFLOWS / "DasiwaLTX23WorkflowsI2VFLF2V_omniforgeCLTX23V36.json"
 DST = WORKFLOWS / "DasiwaLTX23WorkflowsI2VFLF2V_omniforgeCLTX23V36_runpod-no-ltx-tiled-decode.json"
 
 MISSING_NODE_TYPE = "LTXVSpatioTemporalTiledVAEDecode"
+SAGE_NODE_TYPES = {
+    "PathchSageAttentionKJ",
+    "LTX2MemoryEfficientSageAttentionPatch",
+}
 
 
 def walk_containers(value):
@@ -62,18 +66,62 @@ def remove_missing_tiled_node(container):
     return True
 
 
+def apply_runpod_runtime_defaults(container):
+    nodes = container.get("nodes")
+    if not isinstance(nodes, list):
+        return 0
+
+    changed = 0
+    for node in nodes:
+        node_type = node.get("type")
+
+        if node_type in SAGE_NODE_TYPES:
+            if node.get("mode") != 4:
+                node["mode"] = 4
+                changed += 1
+
+        if node_type == "DaSiWa_NodeStatusSwitch":
+            node_text = json.dumps(node, ensure_ascii=False)
+            if "SageAttention" in node_text or "Sage Attention" in node_text:
+                values = node.get("widgets_values")
+                if isinstance(values, list) and values and values[0] is not False:
+                    values[0] = False
+                    changed += 1
+
+        if node_type == "ModelPatchTorchSettings":
+            values = node.get("widgets_values")
+            if isinstance(values, list) and values and values[0] is not False:
+                values[0] = False
+                changed += 1
+            if node.get("mode") != 0:
+                node["mode"] = 0
+                changed += 1
+
+        if node_type == "DualCLIPLoader":
+            values = node.get("widgets_values")
+            if isinstance(values, list) and len(values) >= 4 and values[3] != "cpu":
+                values[3] = "cpu"
+                changed += 1
+
+    return changed
+
+
 def main():
     data = json.loads(SRC.read_text(encoding="utf-8"))
-    changed = 0
+    removed_tiled = 0
+    runtime_defaults = 0
     for container in walk_containers(data):
         if remove_missing_tiled_node(container):
-            changed += 1
+            removed_tiled += 1
+        runtime_defaults += apply_runpod_runtime_defaults(container)
 
-    if changed == 0:
+    if removed_tiled == 0:
         raise SystemExit(f"No {MISSING_NODE_TYPE} node found")
 
     DST.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"Wrote {DST}")
+    print(f"Removed tiled decode containers: {removed_tiled}")
+    print(f"Applied RunPod runtime defaults: {runtime_defaults}")
 
 
 if __name__ == "__main__":
