@@ -70,12 +70,16 @@ RUN set -eux; \
 
 COPY scripts/patch_ltxvideo_kornia.py /tmp/patch_ltxvideo_kornia.py
 COPY scripts/patch_dasiwa_scaler_legacy.py /tmp/patch_dasiwa_scaler_legacy.py
+COPY scripts/patch_kjnodes_sage_fallback.py /tmp/patch_kjnodes_sage_fallback.py
 RUN python /tmp/patch_ltxvideo_kornia.py /opt/ComfyUI/custom_nodes/ComfyUI-LTXVideo/pyramid_blending.py \
-    && python /tmp/patch_dasiwa_scaler_legacy.py /opt/ComfyUI/custom_nodes/ComfyUI-DaSiWa-Nodes
+    && python /tmp/patch_dasiwa_scaler_legacy.py /opt/ComfyUI/custom_nodes/ComfyUI-DaSiWa-Nodes \
+    && python /tmp/patch_kjnodes_sage_fallback.py /opt/ComfyUI/custom_nodes/ComfyUI-KJNodes
 
-ARG INSTALL_SAGEATTENTION=false
+ARG INSTALL_SAGEATTENTION=true
+ARG SAGEATTENTION_PACKAGE=sageattention==1.0.6
 RUN if [ "${INSTALL_SAGEATTENTION}" = "true" ]; then \
-      python -m pip install --no-cache-dir sageattention; \
+      python -m pip install --no-cache-dir "${SAGEATTENTION_PACKAGE}" || \
+      echo "WARNING: SageAttention install failed; KJNodes will fall back to standard attention."; \
     fi
 
 COPY start.sh /start-comfy.sh

@@ -38,10 +38,10 @@ docker build --platform linux/amd64 -t ghcr.io/grawthings-beep/dasiwa-ltx23-runp
 docker push ghcr.io/grawthings-beep/dasiwa-ltx23-runpod-comfyui:0.2.0
 ```
 
-Optional SageAttention build:
+SageAttention is installed by default for the workflow's active KJNodes SageAttention path. If the install is unavailable on a future base image, the image still builds and KJNodes falls back to standard attention instead of crashing.
 
 ```bash
-docker build --platform linux/amd64 --build-arg INSTALL_SAGEATTENTION=true -t ghcr.io/grawthings-beep/dasiwa-ltx23-runpod-comfyui:0.2.0-sage .
+docker build --platform linux/amd64 --build-arg INSTALL_SAGEATTENTION=false -t ghcr.io/grawthings-beep/dasiwa-ltx23-runpod-comfyui:0.2.0-no-sage .
 ```
 
 ## RunPod template settings
@@ -63,6 +63,7 @@ ComfyUI starts with `--enable-cors-header` so RunPod's proxy does not trigger ho
 Startup refreshes the ComfyUI application files from the image while preserving `/workspace/ComfyUI/models`, `input`, `output`, `temp`, and `user`. This repairs stale or partial ComfyUI code left on a persistent RunPod volume.
 Model downloads run in the background by default, so ComfyUI can become reachable before the large UNet and text encoder finish downloading.
 The startup script creates tiny placeholder media and image files so inactive video, audio, watermark, and reference-image branches do not fail validation before you replace them.
+KJNodes is patched at image build time so missing or unsupported SageAttention kernels are treated as a warning and the model continues with standard attention, keeping the provided workflow unchanged.
 
 ## Model behavior
 
