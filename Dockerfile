@@ -69,7 +69,9 @@ RUN set -eux; \
     python -m pip install --no-cache-dir --upgrade "transformers[timm]==4.56.2"
 
 COPY scripts/patch_ltxvideo_kornia.py /tmp/patch_ltxvideo_kornia.py
-RUN python /tmp/patch_ltxvideo_kornia.py /opt/ComfyUI/custom_nodes/ComfyUI-LTXVideo/pyramid_blending.py
+COPY scripts/patch_dasiwa_scaler_legacy.py /tmp/patch_dasiwa_scaler_legacy.py
+RUN python /tmp/patch_ltxvideo_kornia.py /opt/ComfyUI/custom_nodes/ComfyUI-LTXVideo/pyramid_blending.py \
+    && python /tmp/patch_dasiwa_scaler_legacy.py /opt/ComfyUI/custom_nodes/ComfyUI-DaSiWa-Nodes
 
 ARG INSTALL_SAGEATTENTION=false
 RUN if [ "${INSTALL_SAGEATTENTION}" = "true" ]; then \
