@@ -60,12 +60,14 @@ ComfyUI runs on HTTP port `8188`.
 The Docker base image is pinned to CUDA 12.4.1 to avoid RunPod hosts with older NVIDIA drivers failing before the container starts.
 The Transformers package is pinned to `4.56.2` because newer releases import continuous-batching modules that require newer Torch APIs than the CUDA 12.4 base provides.
 ComfyUI starts with `--enable-cors-header` so RunPod's proxy does not trigger host/origin 403 responses.
+Model downloads run in the background by default, so ComfyUI can become reachable before the large UNet and text encoder finish downloading.
 The startup script creates tiny placeholder media and image files so inactive video, audio, watermark, and reference-image branches do not fail validation before you replace them.
 
 ## Model behavior
 
 On first start, `DOWNLOAD_MODELS=true` downloads the model files into `/workspace/ComfyUI/models`.
 Downloads run in parallel by default. Tune `MAX_PARALLEL_DOWNLOADS`, `ARIA2_CONNECTIONS`, and `ARIA2_SPLIT` if your RunPod host or network is unhappy.
+Set `DOWNLOAD_MODELS_BACKGROUND=false` only when you want the container to block ComfyUI startup until every model has finished downloading.
 
 The V39 workflow selects `LTX2/DaSiWa-LTX23-GoldenLace-v3_fp8.safetensors` as the main UNet. The template downloads Golden Lace v3 FP8 from Civitai by default and saves it with that workflow filename.
 The main transformer is stored in `models/diffusion_models` and symlinked into `models/unet` for compatibility with old and new ComfyUI loaders.

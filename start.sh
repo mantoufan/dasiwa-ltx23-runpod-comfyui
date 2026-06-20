@@ -6,15 +6,27 @@ set -Eeuo pipefail
 : "${COMFYUI_PORT:=8188}"
 : "${CLI_ARGS:=--listen ${COMFYUI_HOST} --port ${COMFYUI_PORT} --preview-method auto --enable-cors-header}"
 : "${DOWNLOAD_MODELS:=true}"
+: "${DOWNLOAD_MODELS_BACKGROUND:=true}"
+
+is_truthy() {
+  case "${1,,}" in
+    1|true|yes|y|on) return 0 ;;
+    *) return 1 ;;
+  esac
+}
 
 if [ -x /start.sh ]; then
   /start.sh &
 fi
 
-if [ ! -d "${COMFYUI_DIR}/.git" ]; then
-  mkdir -p "$(dirname "${COMFYUI_DIR}")"
-  rsync -a /opt/ComfyUI/ "${COMFYUI_DIR}/"
-fi
+mkdir -p "${COMFYUI_DIR}"
+rsync -a \
+  --exclude models \
+  --exclude input \
+  --exclude output \
+  --exclude temp \
+  --exclude user \
+  /opt/ComfyUI/ "${COMFYUI_DIR}/"
 
 mkdir -p "${COMFYUI_DIR}/input"
 if [ ! -s "${COMFYUI_DIR}/input/placeholder.mp4" ]; then
@@ -50,8 +62,20 @@ create_placeholder_png "${COMFYUI_DIR}/input/#audio-mark.png" "64x64" "black@0.0
 mkdir -p "${COMFYUI_DIR}/user/default/workflows"
 cp -n /opt/workflows/*.json "${COMFYUI_DIR}/user/default/workflows/" 2>/dev/null || true
 
-if [ "${DOWNLOAD_MODELS}" = "true" ] || [ "${DOWNLOAD_MODELS}" = "1" ] || [ "${DOWNLOAD_MODELS}" = "yes" ]; then
-  /download_models.sh
+if is_truthy "${DOWNLOAD_MODELS}"; then
+  if is_truthy "${DOWNLOAD_MODELS_BACKGROUND}"; then
+    (
+      echo "Model downloader started in background."
+      if /download_models.sh; then
+        echo "Model downloader finished."
+      else
+        echo "Model downloader failed; ComfyUI is still running." >&2
+      fi
+    ) &
+    echo "$!" > "${COMFYUI_DIR}/download_models.pid"
+  else
+    /download_models.sh
+  fi
 fi
 
 cd "${COMFYUI_DIR}"

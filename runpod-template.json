@@ -8,6 +8,7 @@
   "env": {
     "COMFYUI_PORT": "8188",
     "DOWNLOAD_MODELS": "true",
+    "DOWNLOAD_MODELS_BACKGROUND": "true",
     "DOWNLOAD_DEFAULT_UNET": "false",
     "DOWNLOAD_OPTIONAL_LORA": "true",
     "DOWNLOAD_OPTIONAL_POST_MODELS": "true",
