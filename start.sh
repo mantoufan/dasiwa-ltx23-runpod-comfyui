@@ -40,12 +40,18 @@ sync_comfyui_app() {
   done
 
   rsync -a --delete \
-    --exclude models \
-    --exclude input \
-    --exclude output \
-    --exclude temp \
-    --exclude user \
+    --exclude=/models/*** \
+    --exclude=/input/*** \
+    --exclude=/output/*** \
+    --exclude=/temp/*** \
+    --exclude=/user/*** \
     /opt/ComfyUI/ "${COMFYUI_DIR}/"
+
+  if grep -q "ldm.models.autoencoder" "${COMFYUI_DIR}/comfy/sd.py" \
+    && [ ! -f "${COMFYUI_DIR}/comfy/ldm/models/autoencoder.py" ]; then
+    echo "ComfyUI sync failed: comfy/ldm/models was not copied." >&2
+    exit 1
+  fi
 }
 
 echo "Syncing ComfyUI application files from image..."
