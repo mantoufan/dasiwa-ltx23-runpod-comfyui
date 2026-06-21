@@ -13,9 +13,27 @@ set -Eeuo pipefail
 : "${CIVITAI_TOKEN:=}"
 : "${HF_TOKEN:=}"
 
+# RunPod leaves the literal "{{ RUNPOD_SECRET_* }}" placeholder in env vars when
+# the matching secret was never created. Treat those as unset so downloads do
+# not silently authenticate with a broken token.
+sanitize_token() {
+  local value="$1"
+  case "${value}" in
+    *"{{"*|*"}}"*|*"RUNPOD_SECRET"*) printf '' ;;
+    *) printf '%s' "${value}" ;;
+  esac
+}
+CIVITAI_TOKEN="$(sanitize_token "${CIVITAI_TOKEN}")"
+HF_TOKEN="$(sanitize_token "${HF_TOKEN}")"
+
 V39_MAIN_UNET_NAME="LTX2/DaSiWa-LTX23-GoldenLace-v3_fp8.safetensors"
 V39_MAIN_UNET_URL="https://civitai.com/api/download/models/2967331?type=Model&format=SafeTensor&size=full&fp=fp8"
 V39_MAIN_UNET_SHA256="86E14FD4EAF24AE39D3BB2497E9A86C723888A9172CFFECA31C9730DC2C126E2"
+
+# Public, ungated LTX 2.3 distilled transformer used as a drop-in when no
+# Civitai token is available. It is saved under the workflow's expected
+# filename so UNETLoader still resolves without any Civitai setup.
+PUBLIC_FALLBACK_UNET_URL="https://huggingface.co/Kijai/LTX2.3_comfy/resolve/main/diffusion_models/ltx-2.3-22b-distilled_transformer_only_fp8_scaled.safetensors?download=true"
 
 : "${MAIN_UNET_NAME:=${V39_MAIN_UNET_NAME}}"
 : "${MAIN_UNET_URL:=${V39_MAIN_UNET_URL}}"
@@ -67,6 +85,47 @@ normalize_model_defaults() {
     MAIN_UNET_URL="${V39_MAIN_UNET_URL}"
     MAIN_UNET_SHA256="${V39_MAIN_UNET_SHA256}"
   fi
+}
+
+apply_civitai_fallback() {
+  # When the main UNet is a gated Civitai download but no usable CIVITAI_TOKEN
+  # is present, swap to the public Hugging Face LTX 2.3 distilled transformer.
+  # MAIN_UNET_NAME is kept unchanged so the file lands at the path the workflow
+  # widget expects and ComfyUI's UNETLoader resolves without any Civitai setup.
+  if [[ "${MAIN_UNET_URL}" == *"civitai."* && -z "${CIVITAI_TOKEN}" ]]; then
+    echo "================================================================"
+    echo "CIVITAI_TOKEN is not set, but MAIN_UNET_URL points to a gated"
+    echo "Civitai model. Falling back to the public LTX 2.3 distilled"
+    echo "transformer so generation works out of the box."
+    echo "Saving it as: ${MAIN_UNET_NAME}"
+    echo "Set CIVITAI_TOKEN (RunPod secret civitai_token) to use the"
+    echo "Golden Lace v3 model from Civitai instead."
+    echo "================================================================"
+    MAIN_UNET_URL="${PUBLIC_FALLBACK_UNET_URL}"
+    MAIN_UNET_SHA256=""
+  fi
+}
+
+# A failed/gated download often returns a small HTML or JSON error page instead
+# of the model. Saving that as a .safetensors makes ComfyUI fail later with a
+# confusing load error, so reject it here with a clear message.
+looks_like_error_page() {
+  local file="$1"
+  local size
+  local head
+
+  size="$(wc -c < "${file}" 2>/dev/null || echo 0)"
+  if [ "${size}" -lt 50000 ]; then
+    return 0
+  fi
+
+  head="$(head -c 512 "${file}" 2>/dev/null | tr -d '\0')"
+  case "${head}" in
+    *"<!DOCTYPE"*|*"<!doctype"*|*"<html"*|*"<HTML"*|*'{"error"'*|*'{"message"'*)
+      return 0 ;;
+    *)
+      return 1 ;;
+  esac
 }
 
 verify_hash() {
@@ -143,6 +202,14 @@ download() {
     fi
 
     curl "${curl_args[@]}" "${effective_url}"
+  fi
+
+  if looks_like_error_page "${tmp}"; then
+    echo "ERROR: ${safe_url} returned an error/HTML page, not a model file." >&2
+    echo "       Likely a missing or invalid token (CIVITAI_TOKEN / HF_TOKEN) or" >&2
+    echo "       no access to a gated model. Not saving ${dest}." >&2
+    rm -f "${tmp}"
+    return 1
   fi
 
   verify_hash "${tmp}" "${sha256}"
@@ -228,6 +295,7 @@ create_gguf_placeholders() {
 }
 
 normalize_model_defaults
+apply_civitai_fallback
 create_gguf_placeholders
 
 reuse_existing \

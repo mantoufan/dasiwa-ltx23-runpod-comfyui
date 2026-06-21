@@ -16,6 +16,7 @@ This folder packages the provided ComfyUI workflow as a RunPod Pod template.
   - ComfyUI-GGUF
   - Nvidia_RTX_Nodes_ComfyUI
   - ComfyUI-Manager
+  - dasiwa-compat (bundled here: registers a passthrough `ColorTransfer` so the workflow has no missing node types)
 - The original V36 workflow set and the provided V39 workflow in `workflows/`.
 - First-start model downloader for the public Hugging Face assets and the Civitai Golden Lace v3 UNet used by V39.
 
@@ -73,6 +74,10 @@ Set `DOWNLOAD_MODELS_BACKGROUND=false` only when you want the container to block
 
 The V39 workflow selects `LTX2/DaSiWa-LTX23-GoldenLace-v3_fp8.safetensors` as the main UNet. The template downloads Golden Lace v3 FP8 from Civitai by default and saves it with that workflow filename.
 If an older RunPod template still passes the legacy Solstice Civitai model URL, the downloader automatically switches it to the V39 Golden Lace v3 defaults.
+
+**No-Civitai fallback:** if `CIVITAI_TOKEN` is not set (or is left as the unresolved `{{ RUNPOD_SECRET_civitai_token }}` placeholder), the downloader automatically fetches the public, ungated **LTX 2.3 distilled transformer** from Hugging Face and saves it under the same `LTX2/DaSiWa-LTX23-GoldenLace-v3_fp8.safetensors` filename. This means generation works out of the box with zero Civitai setup; set `CIVITAI_TOKEN` only if you specifically want the Golden Lace v3 weights.
+
+**Corrupt-download guard:** a gated/failed download often returns a small HTML or JSON error page instead of the model. The downloader now rejects such files (too small, or starting with `<!DOCTYPE`/`<html`/`{"error"`) and fails loudly instead of saving a broken `.safetensors` that would later cause a confusing ComfyUI load error.
 The main transformer is stored in `models/diffusion_models` and symlinked into `models/unet` for compatibility with old and new ComfyUI loaders.
 The V39 VAE paths use `models/vae/LTX2/`; compatibility symlinks are created under `models/vae/LTX/` for the older V36 workflows.
 
@@ -104,3 +109,4 @@ On Pod start, both files are copied to:
 - The first startup can take a long time because the LTX 2.3 model and text encoder are large.
 - If you do not use the optional LoRA or post-processing paths, set `DOWNLOAD_OPTIONAL_LORA=false` or `DOWNLOAD_OPTIONAL_POST_MODELS=false`.
 - V39 has disabled GGUF branches that reference `placeholder.gguf`; the downloader creates inert placeholder files so the workflow can open cleanly. Replace them with real GGUF models before enabling those branches.
+- The V39 workflow contains a bypassed `ColorTransfer` node that is not provided by any installed custom-node pack. The image registers a dependency-free compatibility passthrough for it (`custom_nodes/dasiwa-compat`) that returns its input image unchanged, so the workflow no longer reports a missing node type and the (bypassed) branch validates correctly.

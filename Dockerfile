@@ -82,6 +82,8 @@ RUN if [ "${INSTALL_SAGEATTENTION}" = "true" ]; then \
       echo "WARNING: SageAttention install failed; KJNodes will fall back to standard attention."; \
     fi
 
+COPY custom_nodes/dasiwa-compat /opt/ComfyUI/custom_nodes/dasiwa-compat
+
 COPY start.sh /start-comfy.sh
 COPY download_models.sh /download_models.sh
 COPY workflows /opt/workflows
