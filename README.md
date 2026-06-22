@@ -81,15 +81,35 @@ If an older RunPod template still passes the legacy Solstice Civitai model URL, 
 The main transformer is stored in `models/diffusion_models` and symlinked into `models/unet` for compatibility with old and new ComfyUI loaders.
 The V39 VAE paths use `models/vae/LTX2/`; compatibility symlinks are created under `models/vae/LTX/` for the older V36 workflows.
 
-Create a RunPod secret named `civitai_token`, then set:
+Create RunPod secrets named `hf_token` and `civitai_token`, then set:
 
 ```text
+HF_TOKEN={{ RUNPOD_SECRET_hf_token }}
 CIVITAI_TOKEN={{ RUNPOD_SECRET_civitai_token }}
 MAIN_UNET_URL=https://civitai.com/api/download/models/2967331?type=Model&format=SafeTensor&size=full&fp=fp8
 MAIN_UNET_NAME=LTX2/DaSiWa-LTX23-GoldenLace-v3_fp8.safetensors
 ```
 
 The downloader appends the token at runtime and masks it in logs.
+Optional Hugging Face LoRAs from `uwgm/nikke-loras` are skipped when `HF_TOKEN`
+is not set. Optional Civitai LoRAs are skipped when `CIVITAI_TOKEN` is not set.
+
+When `DOWNLOAD_OPTIONAL_LORA=true`, startup also downloads the LoRAs mirrored
+from `grawthings-beep/ltx-video-runpod`:
+
+```text
+models/loras/LTX/ltx-2.3-22b-distilled-lora-1.1_fro90_ceil72_condsafe.safetensors
+models/loras/LTX/ltx23_edit_anything_global_rank128_v1_9000steps_adamw.safetensors
+models/loras/LTX/LTX2.3_reasoning_I2V_V3.safetensors
+models/loras/LTX/latexturn_10Eros_i2v_v0.5.safetensors
+models/loras/LTX/LTXV23_FOOTJOB_V1.safetensors
+models/loras/LTX/TentacleMotion_10Eros_i2v_v1.0.safetensors
+models/loras/LTX/stomach_bulge_10eros_sulphur_v1.safetensors
+models/loras/LTX/nsfw_riding_backshot_frontshot_ltx23_v1.0.safetensors
+models/loras/civitai/ltx23_phut_hon_civitai_2806861.safetensors
+models/loras/civitai/smoothmix_animations_ltx_civitai_2911845.safetensors
+models/loras/civitai/civitai_2849892.safetensors
+```
 
 ## Workflow files
 

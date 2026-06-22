@@ -230,6 +230,32 @@ queue_download() {
   DOWNLOAD_PIDS+=("$!")
 }
 
+queue_optional_hf_lora() {
+  local url="$1"
+  local dest="$2"
+  local label="${3:-${dest}}"
+
+  if [[ "${url}" == *"huggingface.co/uwgm/"* && -z "${HF_TOKEN}" ]]; then
+    echo "Skipping optional gated Hugging Face LoRA because HF_TOKEN is not set: ${label}"
+    return
+  fi
+
+  queue_download "${url}" "${dest}"
+}
+
+queue_optional_civitai_lora() {
+  local url="$1"
+  local dest="$2"
+  local label="${3:-${dest}}"
+
+  if [[ -z "${CIVITAI_TOKEN}" ]]; then
+    echo "Skipping optional Civitai LoRA because CIVITAI_TOKEN is not set: ${label}"
+    return
+  fi
+
+  queue_download "${url}" "${dest}"
+}
+
 remove_pid() {
   local done_pid="$1"
   local remaining=()
@@ -339,6 +365,36 @@ queue_download "https://huggingface.co/Lightricks/LTX-2.3/resolve/main/ltx-2.3-t
 if is_truthy "${DOWNLOAD_OPTIONAL_LORA}"; then
   queue_download "https://huggingface.co/TenStrip/LTX2.3_Distilled_Lora_1.1_Experiments/resolve/main/ltx-2.3-22b-distilled-lora-1.1_fro90_ceil72_condsafe.safetensors?download=true" \
     "${MODELS_DIR}/loras/LTX/ltx-2.3-22b-distilled-lora-1.1_fro90_ceil72_condsafe.safetensors"
+  queue_optional_hf_lora "https://huggingface.co/Alissonerdx/LTX-LoRAs/resolve/main/ltx23_edit_anything_global_rank128_v1_9000steps_adamw.safetensors?download=true" \
+    "${MODELS_DIR}/loras/LTX/ltx23_edit_anything_global_rank128_v1_9000steps_adamw.safetensors" \
+    "Edit anything IC LoRA"
+  queue_optional_civitai_lora "https://civitai.com/api/download/models/2806861?type=Model&format=SafeTensor" \
+    "${MODELS_DIR}/loras/civitai/ltx23_phut_hon_civitai_2806861.safetensors" \
+    "Civitai LTX 2.3 Phut hon LoRA"
+  queue_optional_civitai_lora "https://civitai.com/api/download/models/2911845?type=Model&format=SafeTensor" \
+    "${MODELS_DIR}/loras/civitai/smoothmix_animations_ltx_civitai_2911845.safetensors" \
+    "Civitai SmoothMix Animations LTX LoRA"
+  queue_optional_civitai_lora "https://civitai.com/api/download/models/2849892?type=Model&format=SafeTensor" \
+    "${MODELS_DIR}/loras/civitai/civitai_2849892.safetensors" \
+    "Civitai LTX LoRA 2849892"
+  queue_optional_hf_lora "https://huggingface.co/uwgm/nikke-loras/resolve/main/LTX2.3_reasoning_I2V_V3.safetensors?download=true" \
+    "${MODELS_DIR}/loras/LTX/LTX2.3_reasoning_I2V_V3.safetensors" \
+    "Reasoning I2V V3 LoRA"
+  queue_optional_hf_lora "https://huggingface.co/uwgm/nikke-loras/resolve/main/latexturn_10Eros_i2v_v0.5.safetensors?download=true" \
+    "${MODELS_DIR}/loras/LTX/latexturn_10Eros_i2v_v0.5.safetensors" \
+    "Latexturn 10Eros I2V v0.5 LoRA"
+  queue_optional_hf_lora "https://huggingface.co/uwgm/nikke-loras/resolve/main/LTXV23_FOOTJOB_V1.safetensors?download=true" \
+    "${MODELS_DIR}/loras/LTX/LTXV23_FOOTJOB_V1.safetensors" \
+    "LTXV23 Footjob V1 LoRA"
+  queue_optional_hf_lora "https://huggingface.co/uwgm/nikke-loras/resolve/main/TentacleMotion_10Eros_i2v_v1.0.safetensors?download=true" \
+    "${MODELS_DIR}/loras/LTX/TentacleMotion_10Eros_i2v_v1.0.safetensors" \
+    "TentacleMotion 10Eros I2V v1.0 LoRA"
+  queue_optional_hf_lora "https://huggingface.co/uwgm/nikke-loras/resolve/main/stomach_bulge_10eros_sulphur_v1.safetensors?download=true" \
+    "${MODELS_DIR}/loras/LTX/stomach_bulge_10eros_sulphur_v1.safetensors" \
+    "Stomach bulge 10Eros sulphur v1 LoRA"
+  queue_optional_hf_lora "https://huggingface.co/uwgm/nikke-loras/resolve/main/nsfw_riding_backshot_frontshot_ltx23_v1.0.safetensors?download=true" \
+    "${MODELS_DIR}/loras/LTX/nsfw_riding_backshot_frontshot_ltx23_v1.0.safetensors" \
+    "NSFW riding backshot/frontshot LTX2.3 v1.0 LoRA"
 fi
 
 if is_truthy "${DOWNLOAD_OPTIONAL_POST_MODELS}"; then

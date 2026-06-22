@@ -18,6 +18,7 @@
     "MAIN_UNET_URL": "https://civitai.com/api/download/models/2967331?type=Model&format=SafeTensor&size=full&fp=fp8",
     "MAIN_UNET_NAME": "LTX2/DaSiWa-LTX23-GoldenLace-v3_fp8.safetensors",
     "MAIN_UNET_SHA256": "86E14FD4EAF24AE39D3BB2497E9A86C723888A9172CFFECA31C9730DC2C126E2",
+    "HF_TOKEN": "{{ RUNPOD_SECRET_hf_token }}",
     "CIVITAI_TOKEN": "{{ RUNPOD_SECRET_civitai_token }}"
   },
   "isPublic": false,
