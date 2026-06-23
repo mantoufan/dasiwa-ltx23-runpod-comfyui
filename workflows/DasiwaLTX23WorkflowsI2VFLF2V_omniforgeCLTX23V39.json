@@ -1230,6 +1230,11 @@
           ]
         },
         {
+          "name": "motion_guide_data",
+          "type": "MOTION_GUIDE_DATA",
+          "links": []
+        },
+        {
           "name": "frame_rate",
           "type": "FLOAT",
           "links": [
@@ -1250,15 +1255,20 @@
         "aux_id": "kijai/ComfyUI-PromptRelay"
       },
       "widgets_values": [
-        "",
-        144,
+        0,
         6,
-        "{\"segments\":[],\"audioSegments\":[]}",
+        6,
+        0,
+        144,
+        144,
+        "{\"mainTrackEnabled\":true,\"audioTrackEnabled\":true,\"motionTrackEnabled\":true,\"propHeight\":90,\"globalPropHeight\":60,\"showFilenames\":true,\"overrideAudio\":false,\"inpaint_audio\":true,\"global_prompt\":\"\",\"retake_global_prompt\":\"\",\"retakeMode\":false,\"retakeStart\":0,\"retakeLength\":48,\"retakePrompt\":\"\",\"retakeStrength\":1,\"retakeVideo\":null,\"normalStartFrame\":0,\"normalDurationFrames\":144,\"segments\":[],\"motionSegments\":[],\"audioSegments\":[]}",
         "",
         "",
         0.001,
         "",
         false,
+        true,
+        true,
         24,
         "seconds",
         900,
@@ -1266,6 +1276,7 @@
         "maintain aspect ratio",
         32,
         18,
+        false,
         ""
       ],
       "color": "#2a363b",
@@ -1414,7 +1425,7 @@
     [
       7682,
       3314,
-      5,
+      6,
       3578,
       7,
       "FLOAT"
@@ -1606,7 +1617,7 @@
     [
       7738,
       3314,
-      5,
+      6,
       2196,
       4,
       "FLOAT"
@@ -6497,8 +6508,17 @@
               "aux_id": "kijai/ComfyUI-PromptRelay"
             },
             "widgets_values": [
+              "None",
+              1,
               0.5,
-              "nearest-exact"
+              "nearest-exact",
+              1,
+              "center",
+              true,
+              false,
+              256,
+              64,
+              false
             ]
           },
           {
@@ -7715,8 +7735,17 @@
               "aux_id": "kijai/ComfyUI-PromptRelay"
             },
             "widgets_values": [
+              "None",
               1,
-              "nearest-exact"
+              1,
+              "nearest-exact",
+              1,
+              "center",
+              true,
+              false,
+              256,
+              64,
+              false
             ]
           }
         ],

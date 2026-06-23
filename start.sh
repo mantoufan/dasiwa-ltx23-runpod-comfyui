@@ -89,7 +89,7 @@ create_placeholder_png "${COMFYUI_DIR}/input/#Watermark-Darksidewalker-Emblem.pn
 create_placeholder_png "${COMFYUI_DIR}/input/#audio-mark.png" "64x64" "black@0.0"
 
 mkdir -p "${COMFYUI_DIR}/user/default/workflows"
-cp -n /opt/workflows/*.json "${COMFYUI_DIR}/user/default/workflows/" 2>/dev/null || true
+cp -f /opt/workflows/*.json "${COMFYUI_DIR}/user/default/workflows/" 2>/dev/null || true
 
 if is_truthy "${DOWNLOAD_MODELS}"; then
   if is_truthy "${DOWNLOAD_MODELS_BACKGROUND}"; then

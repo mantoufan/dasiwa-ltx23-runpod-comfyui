@@ -50,6 +50,7 @@ RUN python -m pip install --no-cache-dir -r requirements.txt \
       "transformers[timm]==4.56.2"
 
 WORKDIR /opt/ComfyUI/custom_nodes
+ARG WHATDREAMSCOST_COMFYUI_REF=20f639f302c44197c7887d2c677c571e75f3b5cb
 RUN git clone --depth=1 https://github.com/Comfy-Org/ComfyUI-Manager.git ComfyUI-Manager \
     && git clone --depth=1 https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite.git ComfyUI-VideoHelperSuite \
     && git clone --depth=1 https://github.com/rgthree/rgthree-comfy.git rgthree-comfy \
@@ -57,7 +58,8 @@ RUN git clone --depth=1 https://github.com/Comfy-Org/ComfyUI-Manager.git ComfyUI
     && git clone --depth=1 https://github.com/kijai/ComfyUI-KJNodes.git ComfyUI-KJNodes \
     && git clone --depth=1 https://github.com/darksidewalker/ComfyUI-DaSiWa-Nodes.git ComfyUI-DaSiWa-Nodes \
     && git clone --depth=1 https://github.com/Lightricks/ComfyUI-LTXVideo.git ComfyUI-LTXVideo \
-    && git clone --depth=1 https://github.com/WhatDreamsCost/WhatDreamsCost-ComfyUI.git WhatDreamsCost-ComfyUI \
+    && git clone https://github.com/WhatDreamsCost/WhatDreamsCost-ComfyUI.git WhatDreamsCost-ComfyUI \
+    && git -C WhatDreamsCost-ComfyUI checkout "${WHATDREAMSCOST_COMFYUI_REF}" \
     && git clone --depth=1 https://github.com/city96/ComfyUI-GGUF.git ComfyUI-GGUF \
     && git clone --depth=1 https://github.com/Comfy-Org/Nvidia_RTX_Nodes_ComfyUI.git Nvidia_RTX_Nodes_ComfyUI
 
