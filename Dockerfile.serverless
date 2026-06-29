@@ -3,6 +3,9 @@
 FROM ghcr.io/grawthings-beep/dasiwa-ltx23-runpod-comfyui:0.2.2
 RUN python -m pip install --no-cache-dir runpod requests
 COPY handler.py /handler.py
+# Baked API-format workflow template (V39 flattened, multi-image LTXDirector timeline).
+# The handler loads this and injects timeline_data/prompt/seed per request.
+COPY dasiwa_api_template.json /dasiwa_api_template.json
 # Serverless network volume mounts at /runpod-volume -> keep ComfyUI + models there
 # so the ~35GB downloads persist across cold starts (only first cold start downloads).
 ENV COMFYUI_DIR=/runpod-volume/ComfyUI \

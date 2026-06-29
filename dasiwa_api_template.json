@@ -1,0 +1,820 @@
+{
+ "2182": {
+  "inputs": {
+   "options": "Intermediate and Utility",
+   "filenames": [
+    "2196",
+    0
+   ]
+  },
+  "class_type": "VHS_PruneOutputs",
+  "_meta": {
+   "title": "Prune Outputs 🎥🅥🅗🅢"
+  }
+ },
+ "2196": {
+  "inputs": {
+   "frame_rate": [
+    "3314",
+    6
+   ],
+   "loop_count": 0,
+   "filename_prefix": "video/2026-06-29/194336-LTX23",
+   "format": "video/h264-mp4",
+   "pix_fmt": "yuv420p",
+   "crf": 19,
+   "save_metadata": true,
+   "trim_to_audio": false,
+   "pingpong": false,
+   "save_output": true,
+   "images": [
+    "3420:3405",
+    0
+   ],
+   "audio": [
+    "3580:3544",
+    0
+   ]
+  },
+  "class_type": "VHS_VideoCombine",
+  "_meta": {
+   "title": "Video Combine 🎥🅥🅗🅢"
+  }
+ },
+ "3314": {
+  "inputs": {
+   "start_second": 0,
+   "end_second": 6,
+   "duration_seconds": 6,
+   "start_frame": "0",
+   "end_frame": 144,
+   "duration_frames": "144",
+   "timeline_data": "{\"mainTrackEnabled\":true,\"global_prompt\":\"A cinematic journey drifting through ancient Chinese gardens in spring, pink cherry blossoms, traditional pavilions and moon gates, misty water reflections, smooth slow camera movement transitioning between scenes\",\"duration_frames\":144,\"start_frame\":0,\"segments\":[{\"type\":\"image\",\"imageFile\":\"scene_A.png\",\"start\":0,\"length\":1},{\"type\":\"image\",\"imageFile\":\"scene_C.png\",\"start\":72,\"length\":1},{\"type\":\"image\",\"imageFile\":\"scene_B.png\",\"start\":143,\"length\":1}]}",
+   "local_prompts": "",
+   "segment_lengths": "",
+   "epsilon": 0.001,
+   "guide_strength": "1.0,1.0,1.0",
+   "use_custom_audio": true,
+   "use_custom_motion": true,
+   "inpaint_audio": true,
+   "frame_rate": 24,
+   "display_mode": "seconds",
+   "custom_width": [
+    "3319:3600",
+    0
+   ],
+   "custom_height": [
+    "3319:3600",
+    1
+   ],
+   "resize_method": "maintain aspect ratio",
+   "divisible_by": 32,
+   "img_compression": 18,
+   "override_audio": false,
+   "timeline_ui": "",
+   "model": [
+    "3589",
+    0
+   ],
+   "clip": [
+    "3589",
+    1
+   ],
+   "audio_vae": [
+    "3319:3336",
+    0
+   ]
+  },
+  "class_type": "LTXDirector",
+  "_meta": {
+   "title": "LTX Director"
+  }
+ },
+ "3523": {
+  "inputs": {
+   "text": "",
+   "clip": [
+    "3589",
+    1
+   ]
+  },
+  "class_type": "CLIPTextEncode",
+  "_meta": {
+   "title": "Netgative prompt"
+  }
+ },
+ "3589": {
+  "inputs": {
+   "stack_data": "[{\"on\":true,\"lora\":\"None\",\"str\":1,\"vs\":1,\"as\":1},{\"on\":true,\"lora\":\"None\",\"str\":1,\"vs\":1,\"as\":1},{\"on\":true,\"lora\":\"None\",\"str\":1,\"vs\":1,\"as\":1},{\"on\":true,\"lora\":\"None\",\"str\":1,\"vs\":1,\"as\":1},{\"on\":true,\"lora\":\"None\",\"str\":1,\"vs\":1,\"as\":1},{\"on\":true,\"lora\":\"None\",\"str\":1,\"vs\":1,\"as\":1},{\"on\":true,\"lora\":\"None\",\"str\":1,\"vs\":1,\"as\":1},{\"on\":true,\"lora\":\"None\",\"str\":1,\"vs\":1,\"as\":1},{\"on\":true,\"lora\":\"None\",\"str\":1,\"vs\":1,\"as\":1},{\"on\":true,\"lora\":\"None\",\"str\":1,\"vs\":1,\"as\":1},{\"on\":true,\"lora\":\"None\",\"str\":1,\"vs\":1,\"as\":1},{\"on\":true,\"lora\":\"None\",\"str\":1,\"vs\":1,\"as\":1}]",
+   "model": [
+    "3319:3339",
+    0
+   ],
+   "clip": [
+    "3319:3323",
+    2
+   ]
+  },
+  "class_type": "DaSiWa_LTX2LoraLoader",
+  "_meta": {
+   "title": "DaSiWa LTX-2 LoRA Loader"
+  }
+ },
+ "3319:3320": {
+  "inputs": {
+   "model": [
+    "3319:3332",
+    0
+   ]
+  },
+  "class_type": "Context (rgthree)",
+  "_meta": {
+   "title": "Context (safetensor)"
+  }
+ },
+ "3319:3321": {
+  "inputs": {},
+  "class_type": "Context (rgthree)",
+  "_meta": {
+   "title": "Context (gguf)"
+  }
+ },
+ "3319:3322": {
+  "inputs": {},
+  "class_type": "Context (rgthree)",
+  "_meta": {
+   "title": "Context (gguf)"
+  }
+ },
+ "3319:3324": {
+  "inputs": {
+   "clip": [
+    "3319:3338",
+    0
+   ]
+  },
+  "class_type": "Context (rgthree)",
+  "_meta": {
+   "title": "Context (safetensor)"
+  }
+ },
+ "3319:3332": {
+  "inputs": {
+   "unet_name": "LTX2/DaSiWa-LTX23-GoldenLace-v3_fp8.safetensors",
+   "weight_dtype": "default"
+  },
+  "class_type": "UNETLoader",
+  "_meta": {
+   "title": "UNet加载器"
+  }
+ },
+ "3319:3323": {
+  "inputs": {
+   "ctx_01": [
+    "3319:3324",
+    0
+   ],
+   "ctx_02": [
+    "3319:3322",
+    0
+   ]
+  },
+  "class_type": "Context Switch (rgthree)",
+  "_meta": {
+   "title": "Context Switch (rgthree)"
+  }
+ },
+ "3319:3331": {
+  "inputs": {
+   "vae_name": "LTX2/taeltx2_3.safetensors"
+  },
+  "class_type": "VAELoader",
+  "_meta": {
+   "title": "VAE Preview"
+  }
+ },
+ "3319:3336": {
+  "inputs": {
+   "vae_name": "LTX2/LTX23_audio_vae_bf16.safetensors",
+   "device": "main_device",
+   "weight_dtype": "bf16"
+  },
+  "class_type": "VAELoaderKJ",
+  "_meta": {
+   "title": "VAELoader KJ Audio"
+  }
+ },
+ "3319:3330": {
+  "inputs": {
+   "vae_name": "LTX2/LTX23_video_vae_bf16.safetensors",
+   "device": "main_device",
+   "weight_dtype": "bf16"
+  },
+  "class_type": "VAELoaderKJ",
+  "_meta": {
+   "title": "VAELoader KJ Video"
+  }
+ },
+ "3319:3325": {
+  "inputs": {
+   "ctx_01": [
+    "3319:3320",
+    0
+   ],
+   "ctx_02": [
+    "3319:3321",
+    0
+   ]
+  },
+  "class_type": "Context Switch (rgthree)",
+  "_meta": {
+   "title": "Context Switch (rgthree)"
+  }
+ },
+ "3319:3339": {
+  "inputs": {
+   "preview_rate": 24,
+   "model": [
+    "3319:3440",
+    0
+   ],
+   "latent_upscale_model": [
+    "3319:3335",
+    0
+   ],
+   "vae": [
+    "3319:3331",
+    0
+   ]
+  },
+  "class_type": "LTX2SamplingPreviewOverride",
+  "_meta": {
+   "title": "LTX2 Sampling Preview Override"
+  }
+ },
+ "3319:3338": {
+  "inputs": {
+   "clip_name1": "gemma_3_12B_it_fp8_e4m3fn.safetensors",
+   "clip_name2": "ltx-2.3_text_projection_bf16.safetensors",
+   "type": "ltxv",
+   "device": "default"
+  },
+  "class_type": "DualCLIPLoader",
+  "_meta": {
+   "title": "DualCLIPLoader (1st Textencoder, 2nd text_projection)"
+  }
+ },
+ "3319:3440": {
+  "inputs": {
+   "lora_name": "LTX/ltx-2.3-22b-distilled-lora-1.1_fro90_ceil72_condsafe.safetensors",
+   "strength_model": 0.5,
+   "model": [
+    "3319:3325",
+    1
+   ]
+  },
+  "class_type": "LoraLoaderModelOnly",
+  "_meta": {
+   "title": "LoRA加载器（仅模型）"
+  }
+ },
+ "3319:3581": {
+  "inputs": {
+   "sampler_name": "euler_cfg_pp"
+  },
+  "class_type": "KSamplerSelect",
+  "_meta": {
+   "title": "K采样器选择"
+  }
+ },
+ "3319:3582": {
+  "inputs": {
+   "noise_seed": 952514296040295
+  },
+  "class_type": "RandomNoise",
+  "_meta": {
+   "title": "随机噪波"
+  }
+ },
+ "3319:3335": {
+  "inputs": {
+   "model_name": "ltx-2.3-spatial-upscaler-x2-1.1.safetensors"
+  },
+  "class_type": "LatentUpscaleModelLoader",
+  "_meta": {
+   "title": "Load Latent Upscale Model spatial 2x resolution"
+  }
+ },
+ "3319:3600": {
+  "inputs": {
+   "resolution_preset": "0.83 MP - HD",
+   "no_scale": false,
+   "scale_from_image": false,
+   "aspect_preset_when_not_image": "9:16 - Social",
+   "swap_aspect_when_not_image": false,
+   "custom_aspect_width": 16,
+   "custom_aspect_height": 9,
+   "mode": "WAN/LTX (Div32)",
+   "custom_divisor": 8
+  },
+  "class_type": "DaSiWa_ResolutionScaleCalculator",
+  "_meta": {
+   "title": "DaSiWa Resolution Scale Calculator"
+  }
+ },
+ "3577:3569": {
+  "inputs": {
+   "enable_fp16_accumulation": true,
+   "model": [
+    "3314",
+    0
+   ]
+  },
+  "class_type": "ModelPatchTorchSettings",
+  "_meta": {
+   "title": "Model Patch Torch Settings"
+  }
+ },
+ "3577:3573": {
+  "inputs": {
+   "conditioning": [
+    "3523",
+    0
+   ]
+  },
+  "class_type": "ConditioningZeroOut",
+  "_meta": {
+   "title": "条件零化"
+  }
+ },
+ "3577:3574": {
+  "inputs": {
+   "switch": false,
+   "on_false": [
+    "3577:3573",
+    0
+   ],
+   "on_true": [
+    "3523",
+    0
+   ]
+  },
+  "class_type": "ComfySwitchNode",
+  "_meta": {
+   "title": "切换"
+  }
+ },
+ "3578:3555": {
+  "inputs": {
+   "scheduler": "linear_quadratic",
+   "steps": 8,
+   "denoise": 1,
+   "model": [
+    "3314",
+    0
+   ]
+  },
+  "class_type": "BasicScheduler",
+  "_meta": {
+   "title": "基本调度器"
+  }
+ },
+ "3578:3557": {
+  "inputs": {
+   "video_latent": [
+    "3578:3560",
+    2
+   ],
+   "audio_latent": [
+    "3314",
+    3
+   ]
+  },
+  "class_type": "LTXVConcatAVLatent",
+  "_meta": {
+   "title": "LTXVConcatAVLatent"
+  }
+ },
+ "3578:3558": {
+  "inputs": {
+   "av_latent": [
+    "3578:3556",
+    0
+   ]
+  },
+  "class_type": "LTXVSeparateAVLatent",
+  "_meta": {
+   "title": "LTXV分离音视频潜空间"
+  }
+ },
+ "3578:3560": {
+  "inputs": {
+   "ic_lora_name": "None",
+   "ic_lora_strength": 1,
+   "scale_by": 0.5,
+   "upscale_method": "nearest-exact",
+   "image_attention_strength": 1,
+   "crop": "center",
+   "auto_snap_ic_grid": true,
+   "use_tiled_encode": false,
+   "tile_size": 256,
+   "tile_overlap": 64,
+   "retake_mode": false,
+   "positive": [
+    "3578:3564",
+    0
+   ],
+   "negative": [
+    "3578:3564",
+    1
+   ],
+   "vae": [
+    "3319:3330",
+    0
+   ],
+   "latent": [
+    "3314",
+    2
+   ],
+   "guide_data": [
+    "3314",
+    4
+   ]
+  },
+  "class_type": "LTXDirectorGuide",
+  "_meta": {
+   "title": "LTX Director Guide"
+  }
+ },
+ "3578:3561": {
+  "inputs": {
+   "cfg": 1,
+   "model": [
+    "3314",
+    0
+   ],
+   "positive": [
+    "3578:3560",
+    0
+   ],
+   "negative": [
+    "3578:3560",
+    1
+   ]
+  },
+  "class_type": "CFGGuider",
+  "_meta": {
+   "title": "CFG引导器"
+  }
+ },
+ "3578:3564": {
+  "inputs": {
+   "frame_rate": [
+    "3314",
+    6
+   ],
+   "positive": [
+    "3314",
+    1
+   ],
+   "negative": [
+    "3577:3574",
+    0
+   ]
+  },
+  "class_type": "LTXVConditioning",
+  "_meta": {
+   "title": "LTXV条件"
+  }
+ },
+ "3578:3556": {
+  "inputs": {
+   "noise": [
+    "3319:3582",
+    0
+   ],
+   "guider": [
+    "3578:3561",
+    0
+   ],
+   "sampler": [
+    "3319:3581",
+    0
+   ],
+   "sigmas": [
+    "3578:3555",
+    0
+   ],
+   "latent_image": [
+    "3578:3557",
+    0
+   ]
+  },
+  "class_type": "SamplerCustomAdvanced",
+  "_meta": {
+   "title": "自定义采样器（高级）"
+  }
+ },
+ "3579:3549": {
+  "inputs": {
+   "av_latent": [
+    "3579:3548",
+    0
+   ]
+  },
+  "class_type": "LTXVSeparateAVLatent",
+  "_meta": {
+   "title": "LTXV分离音视频潜空间"
+  }
+ },
+ "3579:3553": {
+  "inputs": {
+   "positive": [
+    "3579:3552",
+    0
+   ],
+   "negative": [
+    "3579:3552",
+    1
+   ],
+   "latent": [
+    "3579:3549",
+    0
+   ]
+  },
+  "class_type": "LTXVCropGuides",
+  "_meta": {
+   "title": "LTXV裁剪指导"
+  }
+ },
+ "3579:3554": {
+  "inputs": {
+   "samples": [
+    "3579:3562",
+    2
+   ],
+   "upscale_model": [
+    "3319:3335",
+    0
+   ],
+   "vae": [
+    "3319:3330",
+    0
+   ]
+  },
+  "class_type": "LTXVLatentUpsampler",
+  "_meta": {
+   "title": "LTXV潜空间上采样器"
+  }
+ },
+ "3579:3562": {
+  "inputs": {
+   "positive": [
+    "3578:3560",
+    0
+   ],
+   "negative": [
+    "3578:3560",
+    1
+   ],
+   "latent": [
+    "3578:3558",
+    0
+   ]
+  },
+  "class_type": "LTXVCropGuides",
+  "_meta": {
+   "title": "LTXV裁剪指导"
+  }
+ },
+ "3579:3547": {
+  "inputs": {
+   "cfg": 1,
+   "model": [
+    "3577:3569",
+    0
+   ],
+   "positive": [
+    "3579:3552",
+    0
+   ],
+   "negative": [
+    "3579:3552",
+    1
+   ]
+  },
+  "class_type": "CFGGuider",
+  "_meta": {
+   "title": "CFG引导器"
+  }
+ },
+ "3579:3548": {
+  "inputs": {
+   "noise": [
+    "3319:3582",
+    0
+   ],
+   "guider": [
+    "3579:3547",
+    0
+   ],
+   "sampler": [
+    "3319:3581",
+    0
+   ],
+   "sigmas": [
+    "3579:3551",
+    0
+   ],
+   "latent_image": [
+    "3579:3550",
+    0
+   ]
+  },
+  "class_type": "SamplerCustomAdvanced",
+  "_meta": {
+   "title": "自定义采样器（高级）"
+  }
+ },
+ "3579:3550": {
+  "inputs": {
+   "video_latent": [
+    "3579:3552",
+    2
+   ],
+   "audio_latent": [
+    "3578:3558",
+    1
+   ]
+  },
+  "class_type": "LTXVConcatAVLatent",
+  "_meta": {
+   "title": "LTXVConcatAVLatent"
+  }
+ },
+ "3579:3551": {
+  "inputs": {
+   "scheduler": "linear_quadratic",
+   "steps": 4,
+   "denoise": 0.42,
+   "model": [
+    "3577:3569",
+    0
+   ]
+  },
+  "class_type": "BasicScheduler",
+  "_meta": {
+   "title": "基本调度器"
+  }
+ },
+ "3579:3552": {
+  "inputs": {
+   "ic_lora_name": "None",
+   "ic_lora_strength": 1,
+   "scale_by": 1,
+   "upscale_method": "nearest-exact",
+   "image_attention_strength": 1,
+   "crop": "center",
+   "auto_snap_ic_grid": true,
+   "use_tiled_encode": false,
+   "tile_size": 256,
+   "tile_overlap": 64,
+   "retake_mode": false,
+   "positive": [
+    "3579:3562",
+    0
+   ],
+   "negative": [
+    "3579:3562",
+    1
+   ],
+   "vae": [
+    "3319:3330",
+    0
+   ],
+   "latent": [
+    "3579:3554",
+    0
+   ],
+   "guide_data": [
+    "3314",
+    4
+   ]
+  },
+  "class_type": "LTXDirectorGuide",
+  "_meta": {
+   "title": "LTX Director Guide"
+  }
+ },
+ "3580:3542": {
+  "inputs": {
+   "switch": [
+    "3580:3545",
+    0
+   ],
+   "on_false": [
+    "3580:3543",
+    0
+   ],
+   "on_true": [
+    "3580:3546",
+    0
+   ]
+  },
+  "class_type": "ComfySwitchNode",
+  "_meta": {
+   "title": "Switch VAE"
+  }
+ },
+ "3580:3543": {
+  "inputs": {
+   "samples": [
+    "3579:3553",
+    2
+   ],
+   "vae": [
+    "3319:3330",
+    0
+   ]
+  },
+  "class_type": "VAEDecode",
+  "_meta": {
+   "title": "VAE解码"
+  }
+ },
+ "3580:3544": {
+  "inputs": {
+   "samples": [
+    "3579:3549",
+    1
+   ],
+   "audio_vae": [
+    "3319:3336",
+    0
+   ]
+  },
+  "class_type": "LTXVAudioVAEDecode",
+  "_meta": {
+   "title": "LTXV音频VAE解码"
+  }
+ },
+ "3580:3545": {
+  "inputs": {
+   "value": false
+  },
+  "class_type": "PrimitiveBoolean",
+  "_meta": {
+   "title": "Tiled VAE"
+  }
+ },
+ "3580:3546": {
+  "inputs": {
+   "spatial_tiles": 4,
+   "spatial_overlap": 4,
+   "temporal_tile_length": 32,
+   "temporal_overlap": 8,
+   "last_frame_fix": false,
+   "working_device": "auto",
+   "working_dtype": "auto",
+   "vae": [
+    "3319:3330",
+    0
+   ],
+   "latents": [
+    "3579:3553",
+    2
+   ]
+  },
+  "class_type": "LTXVSpatioTemporalTiledVAEDecode",
+  "_meta": {
+   "title": "🅛🅣🅧 LTXV Spatio Temporal Tiled VAE Decode"
+  }
+ },
+ "3420:3405": {
+  "inputs": {
+   "denoise": true,
+   "denoise_quality": "Ultra",
+   "deblur": true,
+   "deblur_quality": "Ultra",
+   "upscale": "VSR",
+   "upscale_quality": "Ultra",
+   "resize_type": "Scale",
+   "scale": 2,
+   "megapixels": 2,
+   "width": 1920,
+   "height": 1080,
+   "divisible_by": "32",
+   "ratio_preset": "16:9",
+   "resize_method": "Center Crop (Fill)",
+   "device_id": 0,
+   "images": [
+    "3580:3542",
+    0
+   ]
+  },
+  "class_type": "DaSiWa_RTX_UpscalerRefiner",
+  "_meta": {
+   "title": "DaSiWa RTX Upscaler & Refiner"
+  }
+ }
+}
