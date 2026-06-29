@@ -130,6 +130,21 @@ def _apply(wf, inp):
                 ni["aspect_preset_when_not_image"] = "CUSTOM"
                 ni["custom_aspect_width"] = int(m.group(1))
                 ni["custom_aspect_height"] = int(m.group(2))
+
+    # FAST MODE (default ON): base-model direct output. The DaSiWa workflow ends with a heavy
+    # DaSiWa_RTX_UpscalerRefiner that pixel-upscales+refines EVERY decoded frame — by far the slowest
+    # stage. For 480p/720p we don't need it: repoint the video output past the refiner to the decoded
+    # frames it was reading, and ComfyUI prunes the orphaned refiner (+ its upstream-only nodes).
+    if inp.get("fast", True):
+        for node in wf.values():
+            ni = node.get("inputs", {})
+            img = ni.get("images")
+            if isinstance(img, list) and len(img) == 2:
+                src = wf.get(str(img[0]))
+                if src and src.get("class_type") == "DaSiWa_RTX_UpscalerRefiner":
+                    upstream = src.get("inputs", {}).get("images")
+                    if isinstance(upstream, list) and len(upstream) == 2:
+                        ni["images"] = upstream  # bypass the refiner → ComfyUI prunes it
     return wf
 
 
