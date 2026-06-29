@@ -1,36 +1,19 @@
-# Serverless wrapper for the DaSiWa LTX 2.3 ComfyUI image — MODELS BAKED INTO THE IMAGE.
-# Baking ~30GB of weights into the image (vs reading them from a RunPod network volume at cold
-# start) cuts cold start from ~80s (9min under contention) to ~10-20s and removes the volume's
-# datacenter lock, so the endpoint can run in any region / on any GPU.
+# Serverless wrapper for the DaSiWa LTX 2.3 ComfyUI image.
+# Reuses all the audited DaSiWa nodes/patches; adds the RunPod serverless handler.
 FROM ghcr.io/grawthings-beep/dasiwa-ltx23-runpod-comfyui:0.2.2
-
 RUN python -m pip install --no-cache-dir runpod requests
 COPY handler.py /handler.py
+# Baked API-format workflow template (V39 flattened, multi-image LTXDirector timeline).
+# The handler loads this and injects timeline_data/prompt/seed per request.
 COPY dasiwa_api_template.json /dasiwa_api_template.json
-
-# Container-local ComfyUI (no network volume mount needed).
-ENV COMFYUI_DIR=/workspace/ComfyUI
-
-# --- Bake all models at BUILD time ---
-# CIVITAI_TOKEN must be available as a build arg for the gated DaSiWa Golden Lace v3 checkpoint.
-# Set it as a Build Variable in the RunPod endpoint build settings (same value as the runtime env).
-ARG CIVITAI_TOKEN
-RUN CIVITAI_TOKEN="${CIVITAI_TOKEN}" \
-    COMFYUI_DIR=/workspace/ComfyUI \
+# Serverless network volume mounts at /runpod-volume -> keep ComfyUI + models there
+# so the ~35GB downloads persist across cold starts (only first cold start downloads).
+ENV COMFYUI_DIR=/runpod-volume/ComfyUI \
+    DOWNLOAD_MODELS=true \
+    DOWNLOAD_MODELS_BACKGROUND=false \
     DOWNLOAD_DEFAULT_UNET=false \
     DOWNLOAD_OPTIONAL_LORA=true \
     MAIN_UNET_URL="https://civitai.com/api/download/models/2967331?type=Model&format=SafeTensor&size=full&fp=fp8" \
-    MAIN_UNET_NAME="LTX2/DaSiWa-LTX23-GoldenLace-v3_fp8.safetensors" \
-    bash /download_models.sh
-# Fail the build LOUDLY if the gated checkpoint didn't download (e.g. missing build-time token →
-# download_models.sh silently falls back to the public UNET). Golden Lace v3 fp8 is ~20GB; require ≥10GB.
-RUN f="/workspace/ComfyUI/models/LTX2/DaSiWa-LTX23-GoldenLace-v3_fp8.safetensors"; \
-    sz=$(stat -c%s "$f" 2>/dev/null || echo 0); \
-    echo "GoldenLace size: $sz bytes"; \
-    if [ "$sz" -lt 10000000000 ]; then echo "ERROR: GoldenLace checkpoint missing/too small — set CIVITAI_TOKEN as a build arg." >&2; exit 1; fi
-
-# Models are in the image now — never download at runtime.
-ENV DOWNLOAD_MODELS=false \
-    DOWNLOAD_MODELS_BACKGROUND=false
-
+    MAIN_UNET_NAME="LTX2/DaSiWa-LTX23-GoldenLace-v3_fp8.safetensors"
+# CIVITAI_TOKEN is NOT baked (secret) — set it as an endpoint env/secret in the console.
 CMD ["python", "-u", "/handler.py"]
