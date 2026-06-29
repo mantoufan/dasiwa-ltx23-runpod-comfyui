@@ -23,9 +23,12 @@ RUN COMFYUI_DIR=/workspace/ComfyUI \
     MAIN_UNET_NAME="LTX2/DaSiWa-LTX23-GoldenLace-v3_fp8.safetensors" \
     bash /download_models.sh
 # Fail the build LOUDLY if the Golden Lace checkpoint didn't land (~27GB; require ≥20GB).
-RUN f="/workspace/ComfyUI/models/LTX2/DaSiWa-LTX23-GoldenLace-v3_fp8.safetensors"; \
-    sz=$(stat -c%s "$f" 2>/dev/null || echo 0); \
-    echo "GoldenLace size: $sz bytes"; \
+# download_models.sh saves MAIN_UNET to models/diffusion_models/<MAIN_UNET_NAME> and symlinks
+# it into models/unet/<MAIN_UNET_NAME>; check the real file (follow symlink with stat -L).
+RUN f="/workspace/ComfyUI/models/diffusion_models/LTX2/DaSiWa-LTX23-GoldenLace-v3_fp8.safetensors"; \
+    sz=$(stat -L -c%s "$f" 2>/dev/null || echo 0); \
+    echo "GoldenLace size: $sz bytes ($f)"; \
+    ls -lh /workspace/ComfyUI/models/diffusion_models/LTX2/ /workspace/ComfyUI/models/unet/LTX2/ 2>/dev/null || true; \
     if [ "$sz" -lt 20000000000 ]; then echo "ERROR: GoldenLace checkpoint missing/too small." >&2; exit 1; fi
 
 # Models are in the image now — never download at runtime.
