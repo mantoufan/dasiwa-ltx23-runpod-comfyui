@@ -19,7 +19,7 @@ The handler loads a baked API-format template, injects timeline_data (multi-imag
 keyframes), prompt, duration and seed into the LTXDirector / RandomNoise nodes,
 uploads the reference images to the ComfyUI input dir, runs the prompt and returns
 the resulting mp4 as base64."""
-import base64, json, os, subprocess, time, uuid
+import base64, json, os, re, subprocess, time, uuid
 import requests
 import runpod
 
@@ -115,10 +115,21 @@ def _apply(wf, inp):
         elif ct == "RandomNoise" and inp.get("seed") is not None:
             ni["noise_seed"] = int(inp["seed"])
         elif ct == "DaSiWa_ResolutionScaleCalculator":
+            # Map a plain resolution label (480p/720p/1080p/4k) → the node's resolution_preset enum.
+            res = str(inp.get("resolution") or "").lower()
+            preset = {"480p": "480p", "720p": "720p", "1080p": "1080p",
+                      "4k": "4K", "2160p": "4K", "2k": "2K"}.get(res)
             if inp.get("resolution_preset"):
                 ni["resolution_preset"] = inp["resolution_preset"]
-            if inp.get("aspect"):
-                ni["aspect_preset_when_not_image"] = inp["aspect"]
+            elif preset:
+                ni["resolution_preset"] = preset
+            # Aspect: derive exact W:H from `ratio` (e.g. "9:16") via CUSTOM mode so any aspect works
+            # (the preset list is portrait-only). Skip for adaptive/unknown.
+            m = re.match(r"^\s*(\d+)\s*:\s*(\d+)\s*$", str(inp.get("ratio") or inp.get("aspect") or ""))
+            if m:
+                ni["aspect_preset_when_not_image"] = "CUSTOM"
+                ni["custom_aspect_width"] = int(m.group(1))
+                ni["custom_aspect_height"] = int(m.group(2))
     return wf
 
 
