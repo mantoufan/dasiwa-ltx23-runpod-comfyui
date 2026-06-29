@@ -1,19 +1,35 @@
-# Serverless wrapper for the DaSiWa LTX 2.3 ComfyUI image.
-# Reuses all the audited DaSiWa nodes/patches; adds the RunPod serverless handler.
+# Serverless wrapper for the DaSiWa LTX 2.3 ComfyUI image — MODELS BAKED INTO THE IMAGE.
+# Baking ~45GB of weights into the image (vs reading them from a RunPod network volume at cold
+# start) cuts cold start from ~80s (9min under contention) to ~10-20s and removes the volume's
+# datacenter lock, so the endpoint can run in any region / on any GPU.
+#
+# The DaSiWa Golden Lace v3 checkpoint is gated on Civitai, and RunPod's GitHub build passes NO
+# secrets/build-args — so we pull the SAME checkpoint from a PUBLIC HuggingFace mirror
+# (Engetsu77/dasiwa-ltx23, gated:false) which needs no token at build.
 FROM ghcr.io/grawthings-beep/dasiwa-ltx23-runpod-comfyui:0.2.2
+
 RUN python -m pip install --no-cache-dir runpod requests
 COPY handler.py /handler.py
-# Baked API-format workflow template (V39 flattened, multi-image LTXDirector timeline).
-# The handler loads this and injects timeline_data/prompt/seed per request.
 COPY dasiwa_api_template.json /dasiwa_api_template.json
-# Serverless network volume mounts at /runpod-volume -> keep ComfyUI + models there
-# so the ~35GB downloads persist across cold starts (only first cold start downloads).
-ENV COMFYUI_DIR=/runpod-volume/ComfyUI \
-    DOWNLOAD_MODELS=true \
-    DOWNLOAD_MODELS_BACKGROUND=false \
+
+# Container-local ComfyUI (no network volume mount needed at runtime).
+ENV COMFYUI_DIR=/workspace/ComfyUI
+
+# --- Bake all models at BUILD time (public sources only, no token) ---
+RUN COMFYUI_DIR=/workspace/ComfyUI \
     DOWNLOAD_DEFAULT_UNET=false \
     DOWNLOAD_OPTIONAL_LORA=true \
-    MAIN_UNET_URL="https://civitai.com/api/download/models/2967331?type=Model&format=SafeTensor&size=full&fp=fp8" \
-    MAIN_UNET_NAME="LTX2/DaSiWa-LTX23-GoldenLace-v3_fp8.safetensors"
-# CIVITAI_TOKEN is NOT baked (secret) — set it as an endpoint env/secret in the console.
+    MAIN_UNET_URL="https://huggingface.co/Engetsu77/dasiwa-ltx23/resolve/main/DasiwaLTX23_goldenLaceV3_22B_fp8.safetensors?download=true" \
+    MAIN_UNET_NAME="LTX2/DaSiWa-LTX23-GoldenLace-v3_fp8.safetensors" \
+    bash /download_models.sh
+# Fail the build LOUDLY if the Golden Lace checkpoint didn't land (~27GB; require ≥20GB).
+RUN f="/workspace/ComfyUI/models/LTX2/DaSiWa-LTX23-GoldenLace-v3_fp8.safetensors"; \
+    sz=$(stat -c%s "$f" 2>/dev/null || echo 0); \
+    echo "GoldenLace size: $sz bytes"; \
+    if [ "$sz" -lt 20000000000 ]; then echo "ERROR: GoldenLace checkpoint missing/too small." >&2; exit 1; fi
+
+# Models are in the image now — never download at runtime.
+ENV DOWNLOAD_MODELS=false \
+    DOWNLOAD_MODELS_BACKGROUND=false
+
 CMD ["python", "-u", "/handler.py"]
