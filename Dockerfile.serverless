@@ -1,0 +1,7 @@
+# Serverless wrapper for the DaSiWa LTX 2.3 ComfyUI image.
+# Reuses all the audited DaSiWa nodes/patches; adds the RunPod serverless handler.
+FROM ghcr.io/grawthings-beep/dasiwa-ltx23-runpod-comfyui:0.2.2
+RUN python -m pip install --no-cache-dir runpod requests
+COPY handler.py /handler.py
+ENV COMFYUI_DIR=/workspace/ComfyUI
+CMD ["python", "-u", "/handler.py"]
